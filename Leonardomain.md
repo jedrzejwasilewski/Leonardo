@@ -7,8 +7,9 @@ screen=pygame.display.set_mode((800, 600))
 
 #tytul i ikonka
 pygame.display.set_caption("Leonardo")
+
 #player
-grafikapostaci=pygame.image.load("C:/Users/Jędrzej/Desktop/ludzik1.png")
+grafikapostaci=pygame.image.load("C:/Users/Jędrzej/Desktop/ludzik11.png")
 playerx=300
 playery=200
 playerX_change=0
@@ -16,6 +17,15 @@ playerY_change=0
 
 def player(x,y):
     screen.blit(grafikapostaci,(x,y))
+#babcia
+grafbabcia=pygame.image.load("C:/Users/Jędrzej/Desktop/ludzik11.png")
+babciax=500
+babciay=50
+babciaxchange=-0.1
+babciaychange=0
+
+def babcia(x,y):
+    screen.blit(grafbabcia,(x,y))
 
 #petla ktora sprawia ze gra dziala
 running=True
@@ -51,7 +61,9 @@ while running:
 #ruch gracza
     playerx+=playerX_change
     playery+=playerY_change
-#granice mapy    
+    babciax+=babciaxchange
+    babciay+=babciaychange
+#granice mapy
     if playerx <= 0:
         playerx = 0
     elif playerx >= 736:
@@ -60,5 +72,11 @@ while running:
         playerY_change=0
     elif playery>=360:
         playerY_change=0
+
+    if babciax<=0:
+        babciaxchange=0.1
+    if babciax>=700:
+        babciaxchange=-0.1
     player(playerx,playery)
+    babcia(babciax,babciay)
     pygame.display.update()
