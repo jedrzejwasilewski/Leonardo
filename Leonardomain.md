@@ -1,82 +1,105 @@
+# Import the pygame module
 import pygame
 
+# Import pygame.locals for easier access to key coordinates
+# Updated to conform to flake8 and black standards
+from pygame.locals import (
+    RLEACCEL,
+    K_UP,
+    K_DOWN,
+    K_LEFT,
+    K_RIGHT,
+    K_SPACE,
+    K_ESCAPE,
+    KEYDOWN,
+    QUIT,
+)
+
+# Initialize pygame
 pygame.init()
 
-#ekran, szerokosc i wysokosc
-screen=pygame.display.set_mode((800, 600))
+# Define constants for the screen width and height
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
 
-#tytul i ikonka
-pygame.display.set_caption("Leonardo")
+# Define a Player object by extending pygame.sprite.Sprite
+# The surface drawn on the screen is now an attribute of 'player'
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super(Player, self).__init__()
+        self.surf = pygame.image.load("C:/Users/Jędrzej/Desktop/ludzik11.png").convert()
+        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        self.rect = self.surf.get_rect()
+    def update(self, pressed_keys):
+        if pressed_keys[K_UP]:
+            self.rect.move_ip(0, -1)
+        if pressed_keys[K_DOWN]:
+            self.rect.move_ip(0, 1)
+        if pressed_keys[K_LEFT]:
+            self.rect.move_ip(-1, 0)
+        if pressed_keys[K_RIGHT]:
+            self.rect.move_ip(1, 0)
+        if pressed_keys[K_SPACE]:
+            self.rect.move_ip(0,-1)
+        elif not pressed_keys[K_SPACE]:
+            self.rect.move_ip(0,1)
 
-#player
-grafikapostaci=pygame.image.load("C:/Users/Jędrzej/Desktop/ludzik11.png")
-playerx=300
-playery=200
-playerX_change=0
-playerY_change=0
+        # Keep player on the screen
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > SCREEN_WIDTH:
+            self.rect.right = SCREEN_WIDTH
+        if self.rect.top <= 0:
+            self.rect.top = 0
+        if self.rect.bottom >= SCREEN_HEIGHT:
+            self.rect.bottom = SCREEN_HEIGHT
 
-def player(x,y):
-    screen.blit(grafikapostaci,(x,y))
-#babcia
-grafbabcia=pygame.image.load("C:/Users/Jędrzej/Desktop/ludzik11.png")
-babciax=500
-babciay=50
-babciaxchange=-0.1
-babciaychange=0
 
-def babcia(x,y):
-    screen.blit(grafbabcia,(x,y))
+# Create the screen object
+# The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-#petla ktora sprawia ze gra dziala
-running=True
+# Instantiate player. Right now, this is just a rectangle.
+player = Player()
+# Variable to keep the main loop running
+running = True
+# Main loop
 while running:
-#sterowanie strzalkami
+    # Look at every event in the queue
     for event in pygame.event.get():
-        #wyjscie po kliknieciu x w rogu
-        if event.type == pygame.QUIT:
+        # Did the user hit a key?
+        if event.type == KEYDOWN:
+            # Was it the Escape key? If so, stop the loop.
+            if event.key == K_ESCAPE:
+                running = False
+
+        # Did the user click the window close button? If so, stop the loop.
+        elif event.type == QUIT:
             running = False
-        #kiedy klawisz jest wcisniety
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_LEFT:
-                playerX_change = -0.2
-            if event.key == pygame.K_RIGHT:
-                playerX_change = 0.2
-            if event.key == pygame.K_DOWN:
-                playerY_change=0.2
-            if event.key==pygame.K_SPACE:
-                playerY_change=-0.3
-        #kiedy puszczamy klawisz
-        if event.type == pygame.KEYUP:
-            if event.key==pygame.K_LEFT or event.key==pygame.K_RIGHT:
-                playerX_change=0
-            if event.key==pygame.K_DOWN:
-                playerY_change=0
-            if event.key==pygame.K_SPACE:
-                playerY_change=0.3
+
+    # Get the set of keys pressed and check for user input
+    pressed_keys = pygame.key.get_pressed()
+    # Update the player sprite based on user keypresses
+    player.update(pressed_keys)
+# Fill the screen with white
+    screen.fill((0,0,0))
 
 
+# Create a surface and pass in a tuple containing its length and width
+    surf = pygame.Surface((50, 50))
 
-#wyświetlanie koloru tła
-    screen.fill((0,10,0))
-#ruch gracza
-    playerx+=playerX_change
-    playery+=playerY_change
-    babciax+=babciaxchange
-    babciay+=babciaychange
-#granice mapy
-    if playerx <= 0:
-        playerx = 0
-    elif playerx >= 736:
-        playerx = 736
-    elif playery<=0:
-        playerY_change=0
-    elif playery>=360:
-        playerY_change=0
+# Give the surface a color to separate it from the background
+    surf.fill((255, 255, 255))
+    rect = surf.get_rect()
 
-    if babciax<=0:
-        babciaxchange=0.1
-    if babciax>=700:
-        babciaxchange=-0.1
-    player(playerx,playery)
-    babcia(babciax,babciay)
-    pygame.display.update()
+# This line says "Draw surf onto the screen at the center"
+# Put the center of surf at the center of the display
+    surf_center = (
+        (SCREEN_WIDTH-surf.get_width())/2,
+        (SCREEN_HEIGHT-surf.get_height())/2
+    )
+
+# Draw surf at the new coordinates
+      # Draw the player on the screen
+    screen.blit(player.surf, player.rect)
+    pygame.display.flip()
