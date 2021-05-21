@@ -102,8 +102,8 @@ class Babcia(pygame.sprite.Sprite):
             self.rect.right = SCREEN_WIDTH
         if self.rect.top <= 0:
             self.rect.top = 0
-        if self.rect.bottom >= SCREEN_HEIGHT:
-            self.rect.bottom = SCREEN_HEIGHT
+        if self.rect.bottom >= SCREEN_HEIGHT/8:
+            self.rect.bottom = SCREEN_HEIGHT/8
 
 # Create the screen object
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
@@ -176,3 +176,4 @@ while running:
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
     pygame.display.flip()
+
