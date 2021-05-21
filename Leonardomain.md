@@ -55,6 +55,7 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
 
+
 # Define the enemy object by extending pygame.sprite.Sprite
 # The surface you draw on the screen is now an attribute of 'enemy'
 class Enemy(pygame.sprite.Sprite):
@@ -64,7 +65,7 @@ class Enemy(pygame.sprite.Sprite):
         self.surf.fill((255, 255, 255))
         self.rect = self.surf.get_rect(
             center=(
-                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+                random.randint(SCREEN_WIDTH - 120, SCREEN_WIDTH - 100),
                 random.randint(0, SCREEN_HEIGHT),
             )
         )
@@ -73,7 +74,7 @@ class Enemy(pygame.sprite.Sprite):
     # Move the sprite based on speed
     # Remove the sprite when it passes the left edge of the screen
     def update(self):
-        self.rect.move_ip(-self.speed, 0)
+        self.rect.move_ip(0,self.speed)
         if self.rect.right < 0:
             self.kill()
 
@@ -84,10 +85,15 @@ class Babcia(pygame.sprite.Sprite):
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect()
     def update(self):
-        if self.rect.right>0:
-            self.rect.move_ip(1,0)
-        if self.rect.right==0:
-            self.rect.move_ip(-1,0)
+        keystate = pygame.key.get_pressed()
+        if keystate[pygame.K_a]:
+            self.rect.x -= 3
+        if keystate[pygame.K_d]:
+            self.rect.x += 3
+        if keystate[pygame.K_s]:
+            self.rect.y += 3
+        if keystate[pygame.K_w]:
+            self.rect.y -= 3
 
 
         if self.rect.left < 0:
