@@ -1,7 +1,7 @@
 # Import the pygame module
 import pygame
 import random
-
+import time
 # Import pygame.locals for easier access to key coordinates
 # Updated to conform to flake8 and black standards
 from pygame.locals import (
@@ -33,17 +33,17 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.surf.get_rect()
     def update(self, pressed_keys):
         if pressed_keys[K_UP]:
-            self.rect.move_ip(0, -1)
+            self.rect.move_ip(0, -3)
         if pressed_keys[K_DOWN]:
-            self.rect.move_ip(0, 1)
+            self.rect.move_ip(0, 3)
         if pressed_keys[K_LEFT]:
-            self.rect.move_ip(-1, 0)
+            self.rect.move_ip(-3, 0)
         if pressed_keys[K_RIGHT]:
-            self.rect.move_ip(1, 0)
+            self.rect.move_ip(3, 0)
         if pressed_keys[K_SPACE]:
-            self.rect.move_ip(0,-1)
+            self.rect.move_ip(0,-3)
         elif not pressed_keys[K_SPACE]:
-            self.rect.move_ip(0,1)
+            self.rect.move_ip(0,3)
 
         # Keep player on the screen
         if self.rect.left < 0:
@@ -55,6 +55,7 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
 
+
 # Define the enemy object by extending pygame.sprite.Sprite
 # The surface you draw on the screen is now an attribute of 'enemy'
 class Enemy(pygame.sprite.Sprite):
@@ -64,7 +65,7 @@ class Enemy(pygame.sprite.Sprite):
         self.surf.fill((255, 255, 255))
         self.rect = self.surf.get_rect(
             center=(
-                random.randint(SCREEN_WIDTH + 20, SCREEN_WIDTH + 100),
+                random.randint(SCREEN_WIDTH - 600, SCREEN_WIDTH - 10),
                 random.randint(0, SCREEN_HEIGHT),
             )
         )
@@ -73,7 +74,7 @@ class Enemy(pygame.sprite.Sprite):
     # Move the sprite based on speed
     # Remove the sprite when it passes the left edge of the screen
     def update(self):
-        self.rect.move_ip(-self.speed, 0)
+        self.rect.move_ip(0,self.speed)
         if self.rect.right < 0:
             self.kill()
 
@@ -84,10 +85,15 @@ class Babcia(pygame.sprite.Sprite):
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect()
     def update(self):
-        if self.rect.right>0:
-            self.rect.move_ip(1,0)
-        if self.rect.right==0:
-            self.rect.move_ip(-1,0)
+        keystate = pygame.key.get_pressed()
+        if keystate[pygame.K_a]:
+            self.rect.x -= 3
+        if keystate[pygame.K_d]:
+            self.rect.x += 3
+        if keystate[pygame.K_s]:
+            self.rect.y += 3
+        if keystate[pygame.K_w]:
+            self.rect.y -= 3
 
 
         if self.rect.left < 0:
@@ -96,8 +102,8 @@ class Babcia(pygame.sprite.Sprite):
             self.rect.right = SCREEN_WIDTH
         if self.rect.top <= 0:
             self.rect.top = 0
-        if self.rect.bottom >= SCREEN_HEIGHT:
-            self.rect.bottom = SCREEN_HEIGHT
+        if self.rect.bottom >= SCREEN_HEIGHT/8:
+            self.rect.bottom = SCREEN_HEIGHT/8
 
 # Create the screen object
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
@@ -118,6 +124,9 @@ all_sprites.add(player)
 all_sprites.add(babcia)
 # Variable to keep the main loop running
 running = True
+
+screen.fill((0,0,0))
+time.sleep(5)
 # Main loop
 while running:
     # Look at every event in the queue
