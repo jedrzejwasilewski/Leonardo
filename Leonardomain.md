@@ -98,6 +98,18 @@ class Babcia(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
+            
+            
+#Create basic platform class
+class platform(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("C:\\Users\\Martynka\\Desktop\\platform1.png")
+        self.surf = pygame.Surface((SCREEN_WIDTH, 30))
+        self.surf.fill((94,51,23))
+        self.rect = self.surf.get_rect(center = (SCREEN_WIDTH/5, SCREEN_HEIGHT - 50))
+
+P1 = platform()
 
 # Create the screen object
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
@@ -116,6 +128,7 @@ enemies = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 all_sprites.add(babcia)
+all_sprites.add(P1)
 # Variable to keep the main loop running
 running = True
 # Main loop
@@ -144,6 +157,7 @@ while running:
     # Update enemy position
     enemies.update()
     babcia.update()
+    P1.update()
 # Fill the screen with white
     screen.fill((0,0,0))
 
