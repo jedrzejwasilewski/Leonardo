@@ -109,6 +109,63 @@ class Babcia(pygame.sprite.Sprite):
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+pygame.font.init()
+
+font = pygame.font.SysFont("Courier", 24)
+Grandma_text = font.render("Babcia", False, [255, 215, 5])
+screen.blit(Grandma_text, [394, 400])
+pygame.display.flip()
+# screen.fill(pygame.Color("black"))
+# pygame.display.update()
+
+Grandma_text2 = font.render("Lubi robić na drutach i rozwiązywać krzyżówki.", False, [255, 215, 5])
+screen.blit(Grandma_text2, [0, 0])
+pygame.display.flip()
+
+Grandma_text3 = font.render("Na zamku, gdzie mieszka nigdy nie brakuje jej ulubionych lukrecjowych słodyczy.", False, [255, 215, 5])
+screen.blit(Grandma_text3, [0, 0])
+pygame.display.flip()
+
+Grandma_text4 = font.render("Dla wszystkich wydaje się przemiłą starszą panią, ale uwaga!", False, [255, 215, 5])
+screen.blit(Grandma_text4, [0, 0])
+pygame.display.flip()
+
+Grandma_text5 = font.render("Nie lubi swoich wnuków!", False, [255, 215, 5])
+screen.blit(Grandma_text5, [0, 0])
+pygame.display.flip()
+
+Grandson_text1 = font.render("Wnuczek", False, [255, 215, 5])
+screen.blit(Grandson_text1, [394, 400])
+pygame.display.flip()
+
+Granddaughter_text1 = font.render("Wnuczka", False, [255, 215, 5])
+screen.blit(Granddaughter_text1, [394, 400])
+pygame.display.flip()
+
+Grandchild_text1 = font.render("Lubi czytać komiksy o superbohaterach i grać w gry komputerowe.", False, [255, 215, 5])
+screen.blit(Grandchild_text1, [0, 0])
+pygame.display.flip()
+
+Grandchild_text2 = font.render("Nienawidzi lukrecji i ciemnych, zimnych pomieszczeń.", False, [255, 215, 5])
+screen.blit(Grandchild_text2, [0, 0])
+pygame.display.flip()
+
+Grandson_text2 = font.render("Na wakacje rodzice wysyłają go do babci.", False, [255, 215, 5])
+screen.blit(Grandson_text2, [0, 0])
+pygame.display.flip()
+
+Granddaughter_text2 = font.render("Na wakacje rodzice wysyłają ją do babci.", False, [255, 215, 5])
+screen.blit(Granddaughter_text2, [0, 0])
+pygame.display.flip()
+
+Info_text1 = font.render("Żeby wrócić do domu musisz znaleźć wszystkie cenne przedmioty strzeżone przez babcię.", False, [255, 215, 5])
+screen.blit(Info_text1, [0, 0])
+pygame.display.flip()
+
+Info_text2 = font.render("Ostrożnie! Babcia atakuje!", False, [255, 215, 5])
+screen.blit(Info_text2, [0, 0])
+pygame.display.flip()
+
 # Create a custom event for adding a new enemy
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 1250)
