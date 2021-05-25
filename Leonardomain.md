@@ -29,7 +29,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
         self.surf = pygame.image.load("C:/Users/Jędrzej/Desktop/ludzik11.png").convert()
-        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect()
     def update(self, pressed_keys):
         if pressed_keys[K_UP]:
@@ -61,12 +61,12 @@ class Player(pygame.sprite.Sprite):
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
-        self.surf = pygame.Surface((20, 10))
-        self.surf.fill((255, 255, 255))
+        self.surf = pygame.image.load("C:/Users/Jędrzej/Desktop/laczek.png").convert()
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect(
             center=(
                 random.randint(SCREEN_WIDTH - 600, SCREEN_WIDTH - 10),
-                random.randint(0, SCREEN_HEIGHT),
+                (SCREEN_HEIGHT/16),
             )
         )
         self.speed = 1
@@ -82,7 +82,7 @@ class Babcia(pygame.sprite.Sprite):
     def __init__(self):
         super(Babcia, self).__init__()
         self.surf = pygame.image.load("C:/Users/Jędrzej/Desktop/babcia1.png").convert()
-        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect()
     def update(self):
         keystate = pygame.key.get_pressed()
@@ -125,8 +125,8 @@ all_sprites.add(babcia)
 # Variable to keep the main loop running
 running = True
 
-screen.fill((0,0,0))
-time.sleep(5)
+# screen.fill((0,0,0))
+# time.sleep(5)
 # Main loop
 while running:
     # Look at every event in the queue
