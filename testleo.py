@@ -145,62 +145,72 @@ P1 = platform()
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-pygame.font.init()
+# funkcja wyświetlanie i zawijanie tekstu
+def blit_text(surface, text, pos, font, color = pygame.Color('yellow')):
+    words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.
+    space = font.size(' ')[0]  # The width of a space.
+    max_width, max_height = surface.get_size()
+    x, y = pos
+    for line in words:
+        for word in line:
+            word_surface = font.render(word, 0, color)
+            word_width, word_height = word_surface.get_size()
+            if x + word_width >= max_width:
+                x = pos[0]
+                y += word_height
+            surface.blit(word_surface, (x, y))
+            x += word_width + space
+        x = pos[0]
+        y += word_height
 
-font = pygame.font.SysFont("Courier", 24)
-Grandma_text = font.render("Babcia lubi robić na drutach i rozwiązywać krzyżówki.", False, [255, 215, 5])
-screen.blit(Grandma_text, [44, 100])
-pygame.display.flip()
-# screen.fill(pygame.Color("black"))
-# pygame.display.update()
+# teskt, który ma się wyświetlać
+babcia = "Babcia"
+babcia_opis = "Lubi robić na drutach i rozwiązywać krzyżówki." \
+       "\nNa zamku, gdzie mieszka nigdy nie brakuje jej ulubionych lukrecjowych słodyczy." \
+       "\nDla wszystkich wydaje się przemiłą starszą panią, ale to tylko pozory." \
+       "\nNie lubi swoich wnuków."
+wnuczek = "Wnuczek"
+wnuczek_opis = "Lubi czytać komiksy o superbohaterach i grać w gry komputerowe." \
+               "\nNienawidzi lukrecji i ciemnych, zimnych pomieszczeń." \
+               "\nNa wakacje rodzice wysyłają go do babci."
+info = "Żeby mieć siłę wrócić do domu (i wygrać grę), musisz zebrać wszystkie jabłka." \
+             "\nUważaj! Możesz dostać kapciem w głowę albo spaść z platformy i stracić przez to życie!"
 
-# Grandma_text2 = font.render("Lubi robić na drutach i rozwiązywać krzyżówki.", False, [255, 215, 5])
-# screen.blit(Grandma_text2, [0, 0])
-# pygame.display.flip()
-#
-Grandma_text3 = font.render("Na zamku, gdzie mieszka nigdy nie brakuje jej ulubionych lukrecjowych słodyczy.", False, [255, 215, 5])
-screen.blit(Grandma_text3, [44,200])
-pygame.display.flip()
-#
-# Grandma_text4 = font.render("Dla wszystkich wydaje się przemiłą starszą panią, ale uwaga!", False, [255, 215, 5])
-# screen.blit(Grandma_text4, [0, 0])
-# pygame.display.flip()
-#
-# Grandma_text5 = font.render("Nie lubi swoich wnuków!", False, [255, 215, 5])
-# screen.blit(Grandma_text5, [0, 0])
-# pygame.display.flip()
-#
-# Grandson_text1 = font.render("Wnuczek", False, [255, 215, 5])
-# screen.blit(Grandson_text1, [394, 400])
-# pygame.display.flip()
-#
-# Granddaughter_text1 = font.render("Wnuczka", False, [255, 215, 5])
-# screen.blit(Granddaughter_text1, [394, 400])
-# pygame.display.flip()
-#
-# Grandchild_text1 = font.render("Lubi czytać komiksy o superbohaterach i grać w gry komputerowe.", False, [255, 215, 5])
-# screen.blit(Grandchild_text1, [0, 0])
-# pygame.display.flip()
-#
-# Grandchild_text2 = font.render("Nienawidzi lukrecji i ciemnych, zimnych pomieszczeń.", False, [255, 215, 5])
-# screen.blit(Grandchild_text2, [0, 0])
-# pygame.display.flip()
-#
-# Grandson_text2 = font.render("Na wakacje rodzice wysyłają go do babci.", False, [255, 215, 5])
-# screen.blit(Grandson_text2, [0, 0])
-# pygame.display.flip()
-#
-# Granddaughter_text2 = font.render("Na wakacje rodzice wysyłają ją do babci.", False, [255, 215, 5])
-# screen.blit(Granddaughter_text2, [0, 0])
-# pygame.display.flip()
-#
-# Info_text1 = font.render("Żeby wrócić do domu musisz znaleźć wszystkie cenne przedmioty strzeżone przez babcię.", False, [255, 215, 5])
-# screen.blit(Info_text1, [0, 0])
-# pygame.display.flip()
-#
-# Info_text2 = font.render("Ostrożnie! Babcia atakuje!", False, [255, 215, 5])
-# screen.blit(Info_text2, [0, 0])
-# pygame.display.flip()
+# czcionka i wypełnienie ekranu
+font1 = pygame.font.SysFont('Courier', 24)
+screen.fill(pygame.Color('black'))
+
+# wywoływanie tekstu
+blit_text(screen, babcia, (394, 300), font1)
+pygame.display.update()
+pygame.time.wait(2000)
+screen.fill(pygame.Color("black"))
+pygame.display.update()
+
+blit_text(screen, babcia_opis, (20, 220), font1)
+pygame.display.update()
+pygame.time.wait(10000)
+screen.fill(pygame.Color("black"))
+pygame.display.update()
+
+blit_text(screen, wnuczek, (360, 300), font1)
+pygame.display.update()
+pygame.time.wait(2000)
+screen.fill(pygame.Color("black"))
+pygame.display.update()
+
+blit_text(screen, wnuczek_opis, (20, 260), font1)
+pygame.display.update()
+pygame.time.wait(6500)
+screen.fill(pygame.Color("black"))
+pygame.display.update()
+
+blit_text(screen, info, (20, 250), font1)
+pygame.display.update()
+pygame.time.wait(4500)
+screen.fill(pygame.Color("black"))
+pygame.display.update()
+
 # Create a custom event for adding a new enemy
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 1250)
