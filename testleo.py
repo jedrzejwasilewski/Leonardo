@@ -133,6 +133,19 @@ class platform(pygame.sprite.Sprite):
         self.surf = pygame.Surface((SCREEN_WIDTH, 30))
         self.surf.fill((94,51,23))
         self.rect = self.surf.get_rect(center = (SCREEN_WIDTH/5, SCREEN_HEIGHT - 50))
+        
+font=pygame.font.Font("freesansbold.ttf",20)
+textX=650
+textY=550
+def show_time(x, y):
+    zycie=font.render("Życia: "+str(player.get_zycie()),True,(255,255,255))
+    jablka=font.render("Jabłka do zdobycia: "+str(owoc.get_jablka()),True,(255,255,255))
+    screen.blit(zycie,(x,y))
+    screen.blit(jablka,(580,575))
+P1 = platform()
+# Create the screen object
+# The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Create a custom event for adding a new enemy
 ADDENEMY = pygame.USEREVENT + 1
