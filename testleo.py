@@ -61,13 +61,15 @@ class Player(pygame.sprite.Sprite):
         if self.rect.top <= 0:
             self.rect.top = 0
         if self.rect.bottom >= SCREEN_HEIGHT:
-            self.rect.bottom = SCREEN_HEIGHT
+            koniec=True
     def get_selfrect(self):
         return self.rect.bottom
     def get_zycie(self):
         return self.zycie
     def odejmij_zycie(self):
         self.zycie-=1
+    def get_podloga(self):
+        return self.rect.bottom
 
 # Define the enemy object by extending pygame.sprite.Sprite
 # The surface you draw on the screen is now an attribute of 'enemy'
@@ -183,7 +185,7 @@ def blit_text(surface, text, pos, font, color = pygame.Color('yellow')):
 # info = "Żeby mieć siłę wrócić do domu (i wygrać grę), musisz zebrać wszystkie jabłka." \
 #              "\nUważaj! Możesz dostać kapciem w głowę albo spaść z platformy i stracić przez to życie!"
 #
-font1 = pygame.font.SysFont('Courier', 24)
+# font1 = pygame.font.SysFont('Courier', 24)
 # screen.fill(pygame.Color('black'))
 #
 # blit_text(screen, babcia, (394, 300), font1)
@@ -264,6 +266,9 @@ while running:
             if player.get_zycie()<=0:
                 running = False
                 print("Game Over")
+        elif player.get_podloga() >= SCREEN_HEIGHT:
+            running = False
+            print("Game Over")
 # Add a new enemy?
         elif event.type == ADDENEMY:
             # Create the new enemy and add it to sprite groups
