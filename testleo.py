@@ -11,36 +11,27 @@ from pygame.locals import (
     K_LEFT,
     K_RIGHT,
     K_SPACE,
+    K_LCTRL,
     K_ESCAPE,
     KEYDOWN,
     QUIT,
 )
-
 # Initialize pygame
 pygame.init()
 
-# soundObj = pygame.mixer.Sound('C:/Users/Jędrzej/Desktop/leomusic1.wav')
-# soundObj.play()
-pygame.mixer.music.load('C:/Users/Jędrzej/Desktop/leomusic1.wav')
+pygame.mixer.music.load('C:/Users/Jędrzej/Desktop/backgroundmusic.wav')
 pygame.mixer.music.play(-1, 0.0)
-
-
-#Szerokość i wysokość ekranu + obrazek na background
+# Define constants for the screen width and height
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 back=pygame.image.load("C:/Users/Jędrzej/Desktop/bgrnd.png")
-# klasa playera, wybór 1/2 odnosi się do wyboru postaci
+# Define a Player object by extending pygame.sprite.Sprite
+# The surface drawn on the screen is now an attribute of 'player'
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        print("wybierz postac")
-        wybor=int(input())
-        if wybor==1:
-            self.surf = pygame.image.load("C:/Users/Jędrzej/Desktop/ludzik11.png").convert()
-            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
-        elif wybor==2:
-            self.surf = pygame.image.load("C:/Users/Jędrzej/Desktop/g5.png").convert()
-            self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+        self.surf = pygame.image.load("C:/Users/Jędrzej/Desktop/ludzik11.png").convert()
+        self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect()
         self.zycie=3
     def update(self, pressed_keys):
@@ -52,16 +43,17 @@ class Player(pygame.sprite.Sprite):
             self.rect.move_ip(-3, 0)
         if pressed_keys[K_RIGHT]:
             self.rect.move_ip(3, 0)
+        if pressed_keys[K_LCTRL]:
+            if pressed_keys[K_LCTRL]:
+                for i in range(2):
+                    self.rect.move_ip(0,-3)
+                    pygame.time.wait(int(50))
         if pressed_keys[K_SPACE]:
-            czas=pygame.time.get_ticks()
-            print(czas)
-            if czas<5000:
-                self.rect.move_ip(0,-3)
-                czas=0
+            self.rect.move_ip(0,-3)
         elif not pressed_keys[K_SPACE]:
             self.rect.move_ip(0,3)
 
-        # granice poruszania się
+        # Keep player on the screen
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > SCREEN_WIDTH:
@@ -70,8 +62,6 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom >= SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
-        if self.rect.bottom>=300 and self.rect.right>300:
-            self.rect.top=300
     def get_selfrect(self):
         return self.rect.bottom
     def get_zycie(self):
@@ -79,8 +69,8 @@ class Player(pygame.sprite.Sprite):
     def odejmij_zycie(self):
         self.zycie-=1
 
-
-# klasa kapci, które spadają z góry
+# Define the enemy object by extending pygame.sprite.Sprite
+# The surface you draw on the screen is now an attribute of 'enemy'
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
@@ -88,7 +78,7 @@ class Enemy(pygame.sprite.Sprite):
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect(
             center=(
-                random.randint(SCREEN_WIDTH - 600, SCREEN_WIDTH - 10),
+                random.randint(SCREEN_WIDTH - 800, SCREEN_WIDTH - 10),
                 (SCREEN_HEIGHT/16),
             )
         )
@@ -101,7 +91,6 @@ class Enemy(pygame.sprite.Sprite):
         if self.rect.right < 0:
             self.kill()
 
-#klasa babci
 class Babcia(pygame.sprite.Sprite):
     def __init__(self):
         super(Babcia, self).__init__()
@@ -119,7 +108,7 @@ class Babcia(pygame.sprite.Sprite):
         if pressed_keys[K_RIGHT]:
             self.rect.move_ip(3, 0)
 
-        #granice jej ruchu
+
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > SCREEN_WIDTH:
@@ -129,15 +118,20 @@ class Babcia(pygame.sprite.Sprite):
         if self.rect.bottom >= SCREEN_HEIGHT/8:
             self.rect.bottom = SCREEN_HEIGHT/8
 
-#klasa owoca
 class Owoc(pygame.sprite.Sprite):
     def __init__(self):
         super(Owoc, self).__init__()
         self.surf = pygame.image.load("C:/Users/Jędrzej/Desktop/jablko.png").convert()
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
-        self.rect = self.surf.get_rect(
-            center=((SCREEN_WIDTH - 500),(SCREEN_HEIGHT/4)))
-#klasa platformy
+        self.jablka = 5
+    def get_jablka(self):
+        return self.jablka
+    def odejmij_jablka(self):
+        self.jablka-=1
+
+
+    # self.speed = 1
+#Create basic platform class
 class platform(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -146,25 +140,94 @@ class platform(pygame.sprite.Sprite):
         self.surf.fill((94,51,23))
         self.rect = self.surf.get_rect(center = (SCREEN_WIDTH/5, SCREEN_HEIGHT - 50))
 
-#wyświetlanie żyć na ekreanie
-font=pygame.font.Font("freesansbold.ttf",32)
-textX=600
+font=pygame.font.Font("freesansbold.ttf",20)
+textX=650
 textY=550
-def show_life(x, y):
-    zycie=font.render("Życia:"+str(player.get_zycie()),True,(255,255,255))
+def show_time(x, y):
+    zycie=font.render("Życia: "+str(player.get_zycie()),True,(255,255,255))
+    jablka=font.render("Jabłka do zdobycia: "+str(owoc.get_jablka()),True,(255,255,255))
     screen.blit(zycie,(x,y))
-
-#stworzenie głownego ekranu
+    screen.blit(jablka,(580,575))
+P1 = platform()
+# Create the screen object
+# The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-#Pojawianie się nowych kapci co jakis czas
+# żróło: https://www.codegrepper.com/code-examples/python/pygame+text+on+screen+multiple+lines
+def blit_text(surface, text, pos, font, color = pygame.Color('yellow')):
+    words = [word.split(' ') for word in text.splitlines()]  # 2D array where each row is a list of words.
+    space = font.size(' ')[0]  # The width of a space.
+    max_width, max_height = surface.get_size()
+    x, y = pos
+    for line in words:
+        for word in line:
+            word_surface = font.render(word, 0, color)
+            word_width, word_height = word_surface.get_size()
+            if x + word_width >= max_width:
+                x = pos[0]  # Reset the x.
+                y += word_height  # Start on new row.
+            surface.blit(word_surface, (x, y))
+            x += word_width + space
+        x = pos[0]  # Reset the x.
+        y += word_height  # Start on new row.
+#
+# babcia = "Babcia"
+# babcia_opis = "Lubi robić na drutach i rozwiązywać krzyżówki." \
+#        "\nNa zamku, gdzie mieszka nigdy nie brakuje jej ulubionych lukrecjowych słodyczy." \
+#        "\nDla wszystkich wydaje się przemiłą starszą panią, ale to tylko pozory." \
+#        "\nNie lubi swoich wnuków."
+# wnuczek = "Wnuczek"
+# wnuczek_opis = "Lubi czytać komiksy o superbohaterach i grać w gry komputerowe." \
+#                "\nNienawidzi lukrecji i ciemnych, zimnych pomieszczeń." \
+#                "\nNa wakacje rodzice wysyłają go do babci."
+# info = "Żeby mieć siłę wrócić do domu (i wygrać grę), musisz zebrać wszystkie jabłka." \
+#              "\nUważaj! Możesz dostać kapciem w głowę albo spaść z platformy i stracić przez to życie!"
+#
+font1 = pygame.font.SysFont('Courier', 24)
+# screen.fill(pygame.Color('black'))
+#
+# blit_text(screen, babcia, (394, 300), font1)
+# pygame.display.update()
+# pygame.time.wait(2000)
+# screen.fill(pygame.Color("black"))
+# pygame.display.update()
+#
+# blit_text(screen, babcia_opis, (20, 220), font1)
+# pygame.display.update()
+# pygame.time.wait(10000)
+# screen.fill(pygame.Color("black"))
+# pygame.display.update()
+#
+# blit_text(screen, wnuczek, (360, 300), font1)
+# pygame.display.update()
+# pygame.time.wait(2000)
+# screen.fill(pygame.Color("black"))
+# pygame.display.update()
+#
+# blit_text(screen, wnuczek_opis, (20, 260), font1)
+# pygame.display.update()
+# pygame.time.wait(6500)
+# screen.fill(pygame.Color("black"))
+# pygame.display.update()
+#
+# blit_text(screen, info, (20, 250), font1)
+# pygame.display.update()
+# pygame.time.wait(4500)
+# screen.fill(pygame.Color("black"))
+# pygame.display.update()
+
+# Create a custom event for adding a new enemy
 ADDENEMY = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDENEMY, 1250)
-#wywołanie wszystkich klas
+# Instantiate player. Right now, this is just a rectangle.
 player = Player()
 babcia= Babcia()
 owoc=Owoc()
-P1 = platform()
+def gdzie_owoc(x, y):
+    owoc.rect = owoc.surf.get_rect(center=(x,y))
+
+gdzie_owoc(100,100)
+gdzie_owoc(200,200)
 # Create groups to hold enemy sprites and all sprites
 # - enemies is used for collision detection and position updates
 # - all_sprites is used for rendering
@@ -174,8 +237,14 @@ all_sprites.add(player)
 all_sprites.add(babcia)
 all_sprites.add(owoc)
 all_sprites.add(P1)
+
+Touching_laczek = False
+Touching_jablko = False
 # Variable to keep the main loop running
 running = True
+
+# screen.fill((0,0,0))
+# time.sleep(5)
 # Main loop
 while running:
     # Look at every event in the queue
@@ -186,22 +255,16 @@ while running:
             if event.key == K_ESCAPE:
                 running = False
 
-        # wychodzenie z gry i odejmowanie życia
+        # Did the user click the window close button? If so, stop the loop.
         elif event.type == QUIT:
             running = False
         elif player.get_selfrect()==600:
             player.odejmij_zycie()
             print("tracisz zycko")
-            soundObj = pygame.mixer.Sound('C:/Users/Jędrzej/Desktop/jumpsound.wav')
-            soundObj.play()
             if player.get_zycie()<=0:
-                soundObj = pygame.mixer.Sound('C:/Users/Jędrzej/Desktop/jumpsound.wav')
-                soundObj.play()
-                time.sleep(1)
                 running = False
                 print("Game Over")
-
-# dodawanie kapci
+# Add a new enemy?
         elif event.type == ADDENEMY:
             # Create the new enemy and add it to sprite groups
             new_enemy = Enemy()
@@ -216,6 +279,29 @@ while running:
     babcia.update()
     owoc.update()
     P1.update()
+
+    # kolizje z laczkami
+    if Touching_laczek == False and pygame.sprite.spritecollideany(player, enemies):
+        Touching_laczek = True
+        player.odejmij_zycie()
+        soundObj = pygame.mixer.Sound('C:/Users/Jędrzej/Desktop/lifesound.wav')
+        soundObj.play()
+        if player.get_zycie() <= 0:
+                running = False
+                print("Game Over")
+    if Touching_laczek == True and not pygame.sprite.spritecollideany(player, enemies):
+        Touching_laczek = False
+
+    # kolizje z jabłkami
+    # if Touching_jablko == False and pygame.sprite.spritecollideany(player, owoc):
+    #     Touching_jablko = True
+    #     owoc.odejmij_jablka()
+    #     if owoc.get_jablka() <= 0:
+    #         running = False
+    #         print("Gratulacje, zwycięstwo!")
+    # if Touching_jablko == True and not pygame.sprite.spritecollideany(player, owoc):
+    #     Touching_jablko = False
+
 # Fill the screen with white
     screen.fill((0,0,0))
 
@@ -241,5 +327,23 @@ while running:
     screen.blit(back, [0, 0])
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
-    show_life(textX,textY)
+    show_time(textX,textY)
     pygame.display.flip()
+
+gameover = "GAME OVER"
+win = "Zwycięstwo!"
+font2 = pygame.font.SysFont('impact', 50)
+if player.get_zycie() <= 0:
+    screen.fill(pygame.Color('black'))
+    blit_text(screen, gameover, (300, 300), font2)
+    pygame.display.update()
+    pygame.time.wait(2000)
+    screen.fill(pygame.Color("black"))
+    pygame.display.update()
+# if owoc.get_jablka() <= 0:
+#     screen.fill(pygame.Color('black'))
+#     blit_text(screen, gameover, (300, 300), font2)
+#     pygame.display.update()
+#     pygame.time.wait(2000)
+#     screen.fill(pygame.Color("black"))
+#     pygame.display.update()
