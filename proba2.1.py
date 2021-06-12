@@ -369,6 +369,11 @@ while running:
             nowe_japko = New_japko()
             japka.add(nowe_japko)
             all_sprites.add(nowe_japko)
+           
+        # zamykanie programu po naciśnięciu x w oknie pygame
+        elif event.type == pygame.QUIT:
+            pygame.quit()
+            exit()
 
     # Get the set of keys pressed and check for user input
     pressed_keys = pygame.key.get_pressed()
