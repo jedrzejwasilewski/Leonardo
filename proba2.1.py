@@ -19,6 +19,11 @@ from pygame.locals import (
 # Initialize pygame
 pygame.init()
 
+#nazwa okna i ikonka
+pygame.display.set_caption ("Leonardo")
+icon = pygame.image.load ("C:/Users/Jędrzej/Desktop/ludzik11.png")
+pygame.display.set_icon (icon)
+
 pygame.mixer.music.load('C:/Users/Jędrzej/Desktop/backgroundmusic.wav')
 pygame.mixer.music.play(-1, 0.0)
 
@@ -252,8 +257,13 @@ wnuczek = "Wnuczek"
 wnuczek_opis = "Lubi czytać komiksy o superbohaterach i grać w gry komputerowe." \
                "\nNienawidzi lukrecji i ciemnych, zimnych pomieszczeń." \
                "\nNa wakacje rodzice wysyłają go do babci."
-info = "Żeby mieć siłę wrócić do domu (i wygrać grę), musisz zebrać wszystkie jabłka." \
+info = "Żeby mieć siłę wrócić do domu (i wygrać grę), musisz zebrać 5 jabłek." \
              "\nUważaj! Możesz dostać kapciem w głowę albo spaść z platformy i stracić przez to życie!"
+info2 = "Sterowanie:" \
+       "\n [lewa strzałka] - ruch w lewo" \
+       "\n [prawa strzałka] - ruch w prawo" \
+       "\n [spacja] - podskok" \
+       "\n [lewy control] - zwalnianie kapci po zebraniu jabłka (5 sekund)"
 #
 font1 = pygame.font.SysFont('Courier', 24)
 screen.fill(pygame.Color('black'))
@@ -285,6 +295,12 @@ pygame.display.update()
 blit_text(screen, info, (20, 250), font1)
 pygame.display.update()
 pygame.time.wait(4500)
+screen.fill(pygame.Color("black"))
+pygame.display.update()
+
+blit_text(screen, info2, (20, 250), font1)
+pygame.display.update()
+pygame.time.wait(7000)
 screen.fill(pygame.Color("black"))
 pygame.display.update()
 
