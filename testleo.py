@@ -33,6 +33,7 @@ class Player(pygame.sprite.Sprite):
         self.surf = pygame.image.load("C:/Users/Jędrzej/Desktop/ludzik11.png").convert()
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect()
+        self.mask = pygame.mask.from_surface(self.surf)
         self.zycie=3
     def update(self, pressed_keys):
         if pressed_keys[K_UP]:
@@ -78,6 +79,7 @@ class Enemy(pygame.sprite.Sprite):
         super(Enemy, self).__init__()
         self.surf = pygame.image.load("C:/Users/Jędrzej/Desktop/laczek.png").convert()
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
+        self.mask = pygame.mask.from_surface(self.surf)
         self.rect = self.surf.get_rect(
             center=(
                 random.randint(SCREEN_WIDTH - 800, SCREEN_WIDTH - 10),
@@ -134,13 +136,60 @@ class Owoc(pygame.sprite.Sprite):
 
     # self.speed = 1
 #Create basic platform class
-class platform(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.image.load("C:/Users/Jędrzej/Desktop/platform1.png")
-        self.surf = pygame.Surface((SCREEN_WIDTH, 30))
-        self.surf.fill((94,51,23))
-        self.rect = self.surf.get_rect(center = (SCREEN_WIDTH/5, SCREEN_HEIGHT - 50))
+class new_platform(pygame.sprite.Sprite):
+    def __init__(self, x, y, w, h):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((w, h))
+        self.surf = pygame.image.load("C:\\Users\\Martynka\\Desktop\\platform1.png") #trzeba zmienić file
+        self.image.set_colorkey(255, 255)
+        # self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.mask = pygame.mask.from_surface(self.surf)
+platforms = pygame.sprite.Group() #(szerokość, wysokość, obe.lock, idk)
+P1 = new_platform(150, 250, 68, 1)
+P2 = new_platform(550, 450, 68, 1)
+P3 = new_platform(378, 250, 68, 1)
+# P4 = new_platform(random.randint(1, 790), random.randint(1, 590), 68, 1)
+P4 = new_platform(450, 47, 68, 1)
+P5 = new_platform(310, 370, 68, 1)
+P6 = new_platform(635, 362, 68, 1)
+P7 = new_platform(713, 301, 68, 1)
+P8 = new_platform(30, 474, 68, 1)
+P9 = new_platform(250, 100, 68, 1)
+P10 = new_platform(532, 155, 68, 1)
+P11 = new_platform(160, 400, 68, 1)
+P12 = new_platform(600, 250, 68, 1)
+platforms.add(P1)
+platforms.add(P2)
+platforms.add(P3)
+platforms.add(P4)
+platforms.add(P5)
+platforms.add(P6)
+platforms.add(P7)
+platforms.add(P8)
+platforms.add(P9)
+platforms.add(P10)
+platforms.add(P11)
+platforms.add(P12)
+
+def adjust_on_collision(player, platforms):
+    for platform in platforms:
+        hits = pygame.sprite.spritecollide(player, platforms, False)
+        if hits:
+            player.rect.bottom = hits[0].rect.top
+# player.rect.bottom = player.position
+
+
+def obstacleHit_or_not(player, platforms):
+    for platform in platforms:
+        hit = pygame.sprite.collide_rect(player, platform)
+        if hit:
+            return True and adjust_on_collision(player, platforms)
+    return False
+    player.rect.bottom=player.position
+
 
 font=pygame.font.Font("freesansbold.ttf",20)
 textX=650
@@ -238,7 +287,8 @@ all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 all_sprites.add(babcia)
 all_sprites.add(owoc)
-all_sprites.add(P1)
+all_sprites.add(platforms)
+
 
 Touching_laczek = False
 Touching_jablko = False
@@ -283,10 +333,12 @@ while running:
     enemies.update()
     babcia.update()
     owoc.update()
-    P1.update()
+    platforms.update()
+    
+    print(obstacleHit_or_not(player, platforms))
 
     # kolizje z laczkami
-    if Touching_laczek == False and pygame.sprite.spritecollideany(player, enemies):
+    if Touching_laczek == False and pygame.sprite.spritecollideany(player, enemies, pygame.sprite.collide_mask):
         Touching_laczek = True
         player.odejmij_zycie()
         soundObj = pygame.mixer.Sound('C:/Users/Jędrzej/Desktop/lifesound.wav')
@@ -294,7 +346,7 @@ while running:
         if player.get_zycie() <= 0:
                 running = False
                 print("Game Over")
-    if Touching_laczek == True and not pygame.sprite.spritecollideany(player, enemies):
+    if Touching_laczek == True and not pygame.sprite.spritecollideany(player, enemies, pygame.sprite.collide_mask):
         Touching_laczek = False
 
     # kolizje z jabłkami
