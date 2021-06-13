@@ -1,9 +1,8 @@
-# Import the pygame module
+# Importy
 import pygame
 import random
 import time
-# Import pygame.locals for easier access to key coordinates
-# Updated to conform to flake8 and black standards
+# Zaimportowanie klawiszy
 from pygame.locals import (
     RLEACCEL,
     K_UP,
@@ -16,7 +15,7 @@ from pygame.locals import (
     KEYDOWN,
     QUIT,
 )
-# Initialize pygame
+# Inicjalizacja pygame
 pygame.init()
 
 #nazwa okna i ikonka
@@ -24,15 +23,15 @@ pygame.display.set_caption ("Leonardo")
 icon = pygame.image.load ("C:/Users/Jędrzej/Desktop/ludzik11.png")
 pygame.display.set_icon (icon)
 
+#muzyka w tle
 pygame.mixer.music.load('C:/Users/Jędrzej/Desktop/backgroundmusic.wav')
 pygame.mixer.music.play(-1, 0.0)
 
-# Define constants for the screen width and height
+# Wysokość i szerokośćekranu
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 back=pygame.image.load("C:/Users/Jędrzej/Desktop/bgrnd.png")
-# Define a Player object by extending pygame.sprite.Sprite
-# The surface drawn on the screen is now an attribute of 'player'
+# Klasa głównej postaci
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
@@ -42,6 +41,7 @@ class Player(pygame.sprite.Sprite):
         self.position = pygame.math.Vector2(400, 300)
         self.mask = pygame.mask.from_surface(self.surf)
         self.zycie=3
+    #Ruch postaci
     def update(self, pressed_keys):
         if pressed_keys[K_UP]:
             self.rect.move_ip(0, -3)
@@ -51,17 +51,19 @@ class Player(pygame.sprite.Sprite):
             self.rect.move_ip(-3, 0)
         if pressed_keys[K_RIGHT]:
             self.rect.move_ip(3, 0)
+        #slow motion
         if pressed_keys[K_LCTRL]:
             if pressed_keys[K_LCTRL]:
                 for i in range(2):
                     self.rect.move_ip(0,-3)
                     pygame.time.wait(int(50))
+        #skok i grawitacja
         if pressed_keys[K_SPACE]:
             self.rect.move_ip(0,-3)
         elif not pressed_keys[K_SPACE]:
             self.rect.move_ip(0,3)
 
-        # Keep player on the screen
+        # Granice poruszania się
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > SCREEN_WIDTH:
@@ -76,9 +78,10 @@ class Player(pygame.sprite.Sprite):
         return self.zycie
     def odejmij_zycie(self):
         self.zycie-=1
+    def get_podloga(self):
+        return self.rect.bottom    
 
-# Define the enemy object by extending pygame.sprite.Sprite
-# The surface you draw on the screen is now an attribute of 'enemy'
+# Klasa laczków spadających z góry
 class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super(Enemy, self).__init__()
@@ -93,13 +96,13 @@ class Enemy(pygame.sprite.Sprite):
         )
         self.speed = 1
 
-    # Move the sprite based on speed
-    # Remove the sprite when it passes the left edge of the screen
+    # Spadanie kapci i usuwanie ich z ekranu
     def update(self):
         self.rect.move_ip(0,self.speed)
         if self.rect.right < 0:
             self.kill()
 
+#Klasa jabłek do zebrania
 class New_japko(pygame.sprite.Sprite):
     def __init__(self):
         super(New_japko, self).__init__()
@@ -114,19 +117,20 @@ class New_japko(pygame.sprite.Sprite):
         )
         self.speed = 3
 
-    # Move the sprite based on speed
-    # Remove the sprite when it passes the left edge of the screen
+    # Spadanie jabłek i usuwanie ich z ekranu
     def update(self):
         self.rect.move_ip(0,self.speed)
         if self.rect.right < 0:
             self.kill()
 
+#Klasa babci
 class Babcia(pygame.sprite.Sprite):
     def __init__(self):
         super(Babcia, self).__init__()
         self.surf = pygame.image.load("C:/Users/Jędrzej/Desktop/babcia1.png").convert()
         self.surf.set_colorkey((0, 0, 0), RLEACCEL)
         self.rect = self.surf.get_rect()
+    #Poruszanie się babci tak żeby goniła wnuka
     def update(self):
         keystate = pygame.key.get_pressed()
         if keystate[pygame.K_s]:
@@ -138,7 +142,7 @@ class Babcia(pygame.sprite.Sprite):
         if pressed_keys[K_RIGHT]:
             self.rect.move_ip(3, 0)
 
-
+        #granice poruszania się babci tak, żeby była tylko na górze
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > SCREEN_WIDTH:
@@ -148,6 +152,7 @@ class Babcia(pygame.sprite.Sprite):
         if self.rect.bottom >= SCREEN_HEIGHT/8:
             self.rect.bottom = SCREEN_HEIGHT/8
 
+#Pierwotna klasa owoca, zawiera potrzebne funkcje do zbierania jablek
 class Owoc(pygame.sprite.Sprite):
     def __init__(self):
         super(Owoc, self).__init__()
@@ -161,7 +166,7 @@ class Owoc(pygame.sprite.Sprite):
 
 
     # self.speed = 1
-#Create basic platform class
+#Klasa platform
 class new_platform(pygame.sprite.Sprite):
     def __init__(self, x, y, w, h):
         pygame.sprite.Sprite.__init__(self)
@@ -201,6 +206,7 @@ platforms.add(P10)
 platforms.add(P11)
 platforms.add(P12)
 
+#Funkcja kolizji
 def adjust_on_collision(player, platforms):
     for platform in platforms:
         hits = pygame.sprite.spritecollide(player, platforms, False)
@@ -208,7 +214,7 @@ def adjust_on_collision(player, platforms):
             player.rect.bottom = hits[0].rect.top
 # player.rect.bottom = player.position
 
-
+#2 funkcja kolizji
 def obstacleHit_or_not(player, platforms):
     for platform in platforms:
         hit = pygame.sprite.collide_rect(player, platform)
@@ -217,6 +223,7 @@ def obstacleHit_or_not(player, platforms):
     return False
     player.rect.bottom=player.position
 
+#Czcionka i wyświetlanie życia oraz zebranych jablek
 font=pygame.font.Font("freesansbold.ttf",20)
 textX=650
 textY=550
@@ -226,8 +233,7 @@ def show_time(x, y):
     screen.blit(zycie,(x,y))
     screen.blit(jablka,(580,575))
 
-# Create the screen object
-# The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
+# Wyświetlanie ekranu gry
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # żróło: https://www.codegrepper.com/code-examples/python/pygame+text+on+screen+multiple+lines
@@ -247,7 +253,8 @@ def blit_text(surface, text, pos, font, color = pygame.Color('yellow')):
             x += word_width + space
         x = pos[0]  # Reset the x.
         y += word_height  # Start on new row.
-#
+
+#Początkowy tekst
 babcia = "Babcia"
 babcia_opis = "Lubi robić na drutach i rozwiązywać krzyżówki." \
        "\nNa zamku, gdzie mieszka nigdy nie brakuje jej ulubionych lukrecjowych słodyczy." \
@@ -264,7 +271,7 @@ info2 = "Sterowanie:" \
        "\n [prawa strzałka] - ruch w prawo" \
        "\n [spacja] - podskok" \
        "\n [lewy control] - zwalnianie kapci po zebraniu jabłka (5 sekund)"
-#
+#czcionka
 font1 = pygame.font.SysFont('Courier', 24)
 screen.fill(pygame.Color('black'))
 
@@ -304,13 +311,14 @@ pygame.time.wait(7000)
 screen.fill(pygame.Color("black"))
 pygame.display.update()
 
-# Create a custom event for adding a new enemy
+# Pojawianie się kapci
 ADDENEMY = pygame.USEREVENT + 5
 pygame.time.set_timer(ADDENEMY, 1250)
 
+# Pojawianie się owoców
 ADDJAPKO = pygame.USEREVENT + 1
 pygame.time.set_timer(ADDJAPKO, 1250)
-# Instantiate player. Right now, this is just a rectangle.
+# Wywołanie klas
 player = Player()
 babcia= Babcia()
 owoc=Owoc()
@@ -319,9 +327,7 @@ def gdzie_owoc(x, y):
 
 gdzie_owoc(100,100)
 gdzie_owoc(200,200)
-# Create groups to hold enemy sprites and all sprites
-# - enemies is used for collision detection and position updates
-# - all_sprites is used for rendering
+# Stworzenie grup kapci oraz owoców, dodanie pozostałych obiektów do all sprites
 enemies = pygame.sprite.Group()
 japka = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
@@ -332,32 +338,36 @@ all_sprites.add(platforms)
 
 Touching_laczek = False
 Touching_jablko = False
-# Variable to keep the main loop running
+# Zmienna dotycząca głównej pętli gry
 running = True
 
 #
-# Main loop
+#Główna pętla gry
 while running:
-    # Look at every event in the queue
     for event in pygame.event.get():
-        # Did the user hit a key?
+        # Sprawdzanie czy gracz wcisnął klawisz
         if event.type == KEYDOWN:
-            # Was it the Escape key? If so, stop the loop.
+            # Escape kończy grę
             if event.key == K_ESCAPE:
                 running = False
 
-        # Did the user click the window close button? If so, stop the loop.
+        #Kliknięcie krzyżyka kończy grę.
         elif event.type == QUIT:
             running = False
+        #Koniec gry gdy skończy się życie
         elif player.get_selfrect()==600:
             player.odejmij_zycie()
             print("tracisz zycko")
             if player.get_zycie()<=0:
                 running = False
                 print("Game Over")
-# Add a new enemy?
+        #dotknięcie podłogi kończy grę
+        elif player.get_podloga() >= SCREEN_HEIGHT:
+            running = False
+            print("Game Over")
+# Eventy z pojawianiem się kapci i owoców
         elif event.type == ADDENEMY:
-            # Create the new enemy and add it to sprite groups
+            #Kapcie
             new_enemy = Enemy()
             enemies.add(new_enemy)
             all_sprites.add(new_enemy)
@@ -366,19 +376,20 @@ while running:
             enemies.add(new_enemy2)
             all_sprites.add(new_enemy2)
 
+            #owoc
             nowe_japko = New_japko()
             japka.add(nowe_japko)
             all_sprites.add(nowe_japko)
         # zamykanie programu po naciśnięciu x w oknie pygame
         elif event.type == pygame.QUIT:
             pygame.quit()
-            exit()    
+            exit()
 
-    # Get the set of keys pressed and check for user input
+    # Skorzystanie z funkcji pygamemowej wciskania klawiszy, potrzebnej do sterowania
     pressed_keys = pygame.key.get_pressed()
-    # Update the player sprite based on user keypresses
+    # Update sterowania gracza
     player.update(pressed_keys)
-    # Update enemy position
+    # Update pozostałych obiektów
     enemies.update()
     babcia.update()
     owoc.update()
@@ -411,34 +422,14 @@ while running:
     if Touching_jablko == True and not pygame.sprite.spritecollideany(player, japka):
         Touching_jablko = False
 
-# Fill the screen with white
-    screen.fill((0,0,0))
-
-
-# Create a surface and pass in a tuple containing its length and width
-    surf = pygame.Surface((50, 50))
-
-# Give the surface a color to separate it from the background
-    surf.fill((255, 255, 255))
-    rect = surf.get_rect()
-
-# This line says "Draw surf onto the screen at the center"
-# Put the center of surf at the center of the display
-    surf_center = (
-        (SCREEN_WIDTH-surf.get_width())/2,
-        (SCREEN_HEIGHT-surf.get_height())/2
-    )
-
-# Draw surf at the new coordinates
-      # Draw the player on the screen
-    # screen.blit(player.surf, player.rect)
-    # Draw all sprites
+# Wyświetlanie tła ekranu i "narysowanie" wszystkich obiektów
     screen.blit(back, [0, 0])
     for entity in all_sprites:
         screen.blit(entity.surf, entity.rect)
     show_time(textX,textY)
     pygame.display.flip()
 
+#Plansza końcowa z napisem game over lub zwycięstwo
 gameover = "GAME OVER"
 win = "Zwycięstwo!"
 font2 = pygame.font.SysFont('impact', 50)
