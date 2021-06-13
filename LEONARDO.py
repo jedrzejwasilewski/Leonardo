@@ -449,3 +449,13 @@ if owoc.get_jablka() <= 0:
     pygame.time.wait(2000)
     screen.fill(pygame.Color("black"))
     pygame.display.update()
+
+#Źródła
+#https://realpython.com/pygame-a-primer/#background-and-setup
+#https://www.youtube.com/watch?v=FfWpgLFMI7w&t=6140s
+#https://coderslegacy.com/python/pygame-platformer-game-development/ 
+#https://www.youtube.com/watch?v=pN9pBx5ln40
+#https://www.youtube.com/watch?v=BKtiVKNsOYk
+#https://gamedev.stackexchange.com/questions/172975/how-to-make-player-land-on-platforms-more-than-one-in-pygame
+#https://www.youtube.com/watch?v=Dspz3kaTKUg
+#https://www.codegrepper.com/code-examples/python/pygame+text+on+screen+multiple+lines
